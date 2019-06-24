@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "975604592281",
+    "firebase_url": "https://on-top-of-the-game.firebaseio.com",
+    "project_id": "on-top-of-the-game",
+    "storage_bucket": "on-top-of-the-game.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:975604592281:android:38aad819efe7743a",
+        "android_client_info": {
+          "package_name": "org.knh.hospital_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "975604592281-8fluf0mceshtkdj7qgbo9hc9iiu51uh3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBtmQGSPU_t13Ua7Fh4oyo8EV1TVV7kwnc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "975604592281-8fluf0mceshtkdj7qgbo9hc9iiu51uh3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
