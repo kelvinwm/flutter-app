@@ -20,8 +20,10 @@ class _RootPageState extends State<RootPage> {
   AuthStatus _authStatus = AuthStatus.notSignedIn;
   String userId;
 
-  void _signedIn() {
+  void _signedIn() async {
+    final prefs = await SharedPreferences.getInstance();
     setState(() {
+      userId = prefs.getString('userId') ?? '';
       _authStatus = AuthStatus.SignedIn;
     });
   }

@@ -95,6 +95,6 @@ class AllClinics extends StatelessWidget {
     final prefs = await SharedPreferences.getInstance();
     prefs.setString('booked_clinic', clinic);
     Navigator.push(context,
-        MaterialPageRoute(builder: (BuildContext context) => BookNew(clinic)));
+        MaterialPageRoute(builder: (BuildContext context) => BookNew(clinic, "NO", "")));
   }
 }

@@ -8,8 +8,10 @@ import '../auth/auth.dart';
 //TODO: SHOW TIME AND DATE
 class BookNew extends StatefulWidget {
   final String userClinic;
+  final String isSchedule;
+  final String pKey;
 
-  BookNew(this.userClinic);
+  BookNew(this.userClinic, this.isSchedule, this.pKey);
 
   @override
   State<StatefulWidget> createState() {
@@ -149,7 +151,7 @@ class _BookNewState extends State<BookNew> {
     );
   }
 
-  void _getBookingTime(String time) async {
+  void _getBookingTime(String timePeriod) async {
     final prefs = await SharedPreferences.getInstance();
     // set up the buttons
     Widget cancelButton = FlatButton(
@@ -162,26 +164,36 @@ class _BookNewState extends State<BookNew> {
       child: Text("Yes"),
       onPressed: () {
         final userId = prefs.getString('userId') ?? '';
-        final clinic = prefs.getString('booked_clinic') ?? '';
+//        final clinic = prefs.getString('booked_clinic') ?? '';
         final pName = prefs.getString('p_names') ?? '';
         final pAge = prefs.getString('p_age') ?? '';
         final phone = prefs.getString('p_phone') ?? '';
 
         try {
-          Firestore.instance
-              .collection('bookings')
-              .document("$userId")
-              .collection("$userId")
-              .document()
-              .setData({
-            'clinic': '$clinic',
-            'date': '$theDate',
-            'time': '$time',
-            'name': '$pName',
-            'age': '$pAge',
-            'phone': '$phone',
-            'status': 'pending',
-          });
+          if (widget.isSchedule.trim() == "YES") {
+            Firestore.instance
+                .collection('bookings')
+                .document("$userId")
+                .collection("$userId")
+                .document(widget.pKey)
+                .updateData({'date': '$theDate', 'time': '$timePeriod'});
+          } else {
+            Firestore.instance
+                .collection('bookings')
+                .document("$userId")
+                .collection("$userId")
+                .document()
+                .setData({
+              'clinic': '${widget.userClinic}',
+              'date': '$theDate',
+              'time': '$timePeriod',
+              'name': '$pName',
+              'age': '$pAge',
+              'phone': '$phone',
+              'status': 'pending',
+            });
+          }
+
           Navigator.of(context).pushNamedAndRemoveUntil(
               '/home', (Route<dynamic> route) => false);
         } catch (e) {

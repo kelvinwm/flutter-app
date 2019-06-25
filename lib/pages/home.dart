@@ -9,13 +9,15 @@ import 'consult_specialist.dart';
 import 'Book_me.dart';
 import 'new_patient_details.dart';
 import 'all_chats.dart';
+import '../screens/map_screen.dart';
+import '../auth/root_page.dart';
 
 class Home extends StatefulWidget {
   Home(this.auth, this.onSignedOut, this.userId);
 
   final Auth auth;
   final VoidCallback onSignedOut;
-  final String userId;
+  String userId;
 
   @override
   State<StatefulWidget> createState() {
@@ -25,6 +27,8 @@ class Home extends StatefulWidget {
 }
 
 class HomepageState extends State<Home> {
+  String myUserId;
+
   void _signOut() async {
     try {
       await widget.auth.signOut();
@@ -64,7 +68,7 @@ class HomepageState extends State<Home> {
             default:
               return Column(
                 children: <Widget>[
-                  incomingMessage(snapshot),
+                  incomingMessage(snapshot, context),
                 ],
               );
           }
@@ -72,7 +76,6 @@ class HomepageState extends State<Home> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-//          _addPref();
           showAlertDialog(context);
         },
         tooltip: "oops",
@@ -118,16 +121,27 @@ class HomepageState extends State<Home> {
               title: Text('Consult Specialist'),
               onTap: () {
                 // Update the state of the app.
-                // ...
                 // Then close the drawer
                 Navigator.pop(context);
                 _allChats();
               },
             ),
             ListTile(
+              leading: Icon(Icons.location_on),
+              title: Text('Find Clinic Direction'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (BuildContext context) => Nearby()));
+              },
+            ),
+            ListTile(
               leading: Icon(Icons.label),
               title: Text('Logout'),
               onTap: () {
+                Navigator.pop(context);
                 _signOut();
                 Navigator.of(context).pushReplacementNamed('/login');
               },
@@ -137,14 +151,18 @@ class HomepageState extends State<Home> {
       ),
     );
   }
+
+  void _getUserId() async {
+    final prefs = await SharedPreferences.getInstance();
+    myUserId = prefs.getString('userId') ?? '';
+  }
 }
 
-Widget incomingMessage(AsyncSnapshot<QuerySnapshot> snapshot) {
-//  debugPrint(snapshot.data.documents.);
+Widget incomingMessage(
+    AsyncSnapshot<QuerySnapshot> snapshot, BuildContext context) {
   return Expanded(
     child: ListView(
       children: snapshot.data.documents.map((DocumentSnapshot document) {
-        print('HAPA ${document.documentID}');
         return Card(
           elevation: 4,
           //  titles[index]     <-- Card widget
@@ -179,8 +197,14 @@ Widget incomingMessage(AsyncSnapshot<QuerySnapshot> snapshot) {
               trailing: IconButton(
                 icon: new Icon(Icons.edit),
                 onPressed: () {
-                  /* Your code */
-                  print(document['time']);
+//                  print('HAPA ${document.documentID}'); // doc id
+//                  /* Your code */
+//                  print(document['time']);
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (BuildContext context) => BookNew(
+                              document['clinic'], "YES", document.documentID)));
                 },
               )),
         );
