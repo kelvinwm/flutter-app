@@ -6,6 +6,7 @@ import './auth/auth.dart';
 import './auth/login.dart';
 import './pages/home.dart';
 import './pages/all_chats.dart';
+import './screens/phone_auth.dart';
 
 void main() => runApp(MyApp());
 
