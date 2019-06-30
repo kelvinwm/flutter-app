@@ -40,5 +40,4 @@ class MyApp extends StatelessWidget {
     final prefs = await SharedPreferences.getInstance();
     userId = prefs.getString('userId') ?? '';
   }
-
 }

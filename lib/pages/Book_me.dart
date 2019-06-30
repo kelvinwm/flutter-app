@@ -164,7 +164,7 @@ class _BookNewState extends State<BookNew> {
       child: Text("Yes"),
       onPressed: () {
         final userId = prefs.getString('userId') ?? '';
-//        final clinic = prefs.getString('booked_clinic') ?? '';
+        final pID = prefs.getString('patient_id') ?? '';
         final pName = prefs.getString('p_names') ?? '';
         final pAge = prefs.getString('p_age') ?? '';
         final phone = prefs.getString('p_phone') ?? '';
@@ -189,6 +189,7 @@ class _BookNewState extends State<BookNew> {
               'time': '$timePeriod',
               'name': '$pName',
               'age': '$pAge',
+              'patientID': '$pID',
               'phone': '$phone',
               'status': 'pending',
             });

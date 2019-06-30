@@ -10,6 +10,7 @@ import 'Book_me.dart';
 import 'new_patient_details.dart';
 import 'all_chats.dart';
 import '../screens/map_screen.dart';
+import '../screens/patient_id.dart';
 import '../auth/root_page.dart';
 
 class Home extends StatefulWidget {
@@ -90,9 +91,7 @@ class HomepageState extends State<Home> {
           padding: EdgeInsets.zero,
           children: ListTile.divideTiles(context: context, tiles: [
             DrawerHeader(
-              child: ClipRRect(
-                  borderRadius: new BorderRadius.circular(8.0),
-                  child: Image.asset('assets/knh.png')),
+              child: Image.asset('assets/knh.png'),
               decoration: BoxDecoration(
                 color: Colors.blue,
               ),
@@ -138,7 +137,18 @@ class HomepageState extends State<Home> {
               },
             ),
             ListTile(
-              leading: Icon(Icons.label),
+              leading: Icon(Icons.account_balance_wallet),
+              title: Text('Acquire patient ID'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (BuildContext context) => PatientId()));
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.power_settings_new),
               title: Text('Logout'),
               onTap: () {
                 Navigator.pop(context);
