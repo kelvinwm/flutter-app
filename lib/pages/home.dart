@@ -107,7 +107,7 @@ class HomepageState extends State<Home> {
               },
             ),
             ListTile(
-              leading: Icon(Icons.add),
+              leading: Icon(Icons.book),
               title: Text('Book  Clinic'),
               onTap: () {
                 // Update the state of the app.
