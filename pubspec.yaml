@@ -59,6 +59,14 @@ flutter:
     - assets/logo.png
     - assets/knh.png
     - assets/lipa.png
+    - assets/campaigns/agst.jpg
+    - assets/campaigns/camgn.jpg
+    - assets/campaigns/chked.jpg
+    - assets/campaigns/hiv.jpg
+    - assets/campaigns/f1.jpg
+    - assets/campaigns/f2.jpg
+    - assets/campaigns/f3.jpg
+    - assets/campaigns/f4.jpg
   #  - images/a_dot_burr.jpeg
   #  - images/a_dot_ham.jpeg
 

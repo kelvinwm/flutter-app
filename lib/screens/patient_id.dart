@@ -40,7 +40,7 @@ class _PatientIdState extends State<PatientId> {
       setState(() {
         token = user['access_token'];
       });
-      debugPrint((user['access_token']));
+//      debugPrint((user['access_token']));
     } catch (e) {
       print(e);
     }
@@ -147,7 +147,7 @@ class _PatientIdState extends State<PatientId> {
         const IosNotificationSettings(sound: true, badge: true, alert: true));
 
     _messaging.getToken().then((tokenDevice) {
-      print("NIKO $tokenDevice");
+//      print("NIKO $tokenDevice");
       setState(() {
         deviceToken = tokenDevice;
       });

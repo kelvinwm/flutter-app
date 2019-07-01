@@ -12,6 +12,8 @@ import 'all_chats.dart';
 import '../screens/map_screen.dart';
 import '../screens/patient_id.dart';
 import '../screens/service_charter.dart';
+import '../screens/campaigns.dart';
+import '../screens/health_tips.dart';
 import '../auth/root_page.dart';
 
 class Home extends StatefulWidget {
@@ -127,17 +129,6 @@ class HomepageState extends State<Home> {
               },
             ),
             ListTile(
-              leading: Icon(Icons.location_on),
-              title: Text('Find Clinic Direction'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (BuildContext context) => Nearby()));
-              },
-            ),
-            ListTile(
               leading: Icon(Icons.account_balance_wallet),
               title: Text('Acquire patient ID'),
               onTap: () {
@@ -162,6 +153,17 @@ class HomepageState extends State<Home> {
               },
             ),
             ListTile(
+              leading: Icon(Icons.location_on),
+              title: Text('Find Clinic Direction'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (BuildContext context) => Nearby()));
+              },
+            ),
+            ListTile(
               leading: Icon(Icons.video_call),
               title: Text('Video Chat'),
               onTap: () {
@@ -178,7 +180,10 @@ class HomepageState extends State<Home> {
                 // Update the state of the app.
                 // Then close the drawer
                 Navigator.pop(context);
-//                _allChats();
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (BuildContext context) => HealthTips()));
               },
             ),
             ListTile(
@@ -188,7 +193,10 @@ class HomepageState extends State<Home> {
                 // Update the state of the app.
                 // Then close the drawer
                 Navigator.pop(context);
-//                _allChats();
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (BuildContext context) => Campaigns()));
               },
             ),
             ListTile(
