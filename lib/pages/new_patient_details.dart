@@ -149,24 +149,19 @@ class _NewPatientState extends State<NewPatient> {
                     ///GET PATIENT ID BUTTON
                     Container(
                       alignment: Alignment.topRight,
-                      child: Material(
-                        elevation: 2.0,
-                        borderRadius: BorderRadius.circular(5.0),
-                        color: Colors.blueGrey,
-                        child: MaterialButton(
-                          onPressed: () {
-                            _getNewPatientDetails();
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (BuildContext context) =>
-                                        PatientId()));
-                          },
-                          child: Text(
-                            "Get Patient ID",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.white),
-                          ),
+                      child: InkWell(
+                        onTap: () {
+                          _getNewPatientDetails();
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                      PatientId()));
+                        },
+                        child: Text(
+                          "Get Patient ID",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Colors.white),
                         ),
                       ),
                     ),

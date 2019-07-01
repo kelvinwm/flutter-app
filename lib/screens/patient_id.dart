@@ -72,7 +72,7 @@ class _PatientIdState extends State<PatientId> {
         '"Password": "$myPassword",'
         '"Timestamp": "$timestamp",'
         '"TransactionType": "CustomerPayBillOnline",'
-        '"Amount": "10",'
+        '"Amount": "1",'
         '"PartyA": "$newPhone",'
         '"PartyB": "174379",'
         '"PhoneNumber": "$newPhone",'
@@ -102,6 +102,10 @@ class _PatientIdState extends State<PatientId> {
       }
     } catch (e) {
       print(e);
+      setState(() {
+        _progressBarActive = false;
+        _btnEnabled = true;
+      });
     }
     return "Success!";
   }
@@ -128,6 +132,7 @@ class _PatientIdState extends State<PatientId> {
         setState(() {
           _btnEnabled = true;
           _progressBarActive = false;
+//       debugPrint('NIKO ${message.toString()}');
           _ackAlert(message);
         });
       },
@@ -245,19 +250,37 @@ class _PatientIdState extends State<PatientId> {
       context: context,
       builder: (BuildContext context) {
         // return object of type Dialog
-        return AlertDialog(
-          title: Text("${message["data"]["title"]}"),
-          content: Text("${message["data"]["message"]}"),
-          actions: <Widget>[
-            // usually buttons at the bottom of the dialog
-            new FlatButton(
-              child: Text("Ok"),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
+        if (Platform.isAndroid) {
+          // Android-specific code
+          return AlertDialog(
+            title: Text("${message["data"]["title"]}"),
+            content: Text("${message["data"]["message"]}"),
+            actions: <Widget>[
+              // usually buttons at the bottom of the dialog
+              new FlatButton(
+                child: Text("Ok"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        } else if (Platform.isIOS) {
+          // iOS-specific code
+          return AlertDialog(
+            title: Text("${message["title"]}"),
+            content: Text("${message["message"]}"),
+            actions: <Widget>[
+              // usually buttons at the bottom of the dialog
+              new FlatButton(
+                child: Text("Ok"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        }
       },
     );
   }
