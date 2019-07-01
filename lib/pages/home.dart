@@ -11,6 +11,7 @@ import 'new_patient_details.dart';
 import 'all_chats.dart';
 import '../screens/map_screen.dart';
 import '../screens/patient_id.dart';
+import '../screens/service_charter.dart';
 import '../auth/root_page.dart';
 
 class Home extends StatefulWidget {
@@ -116,7 +117,7 @@ class HomepageState extends State<Home> {
               },
             ),
             ListTile(
-              leading: Icon(Icons.chat),
+              leading: Icon(Icons.forum),
               title: Text('Consult Specialist'),
               onTap: () {
                 // Update the state of the app.
@@ -145,6 +146,49 @@ class HomepageState extends State<Home> {
                     context,
                     MaterialPageRoute(
                         builder: (BuildContext context) => PatientId()));
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.note),
+              title: Text('Service Charter'),
+              onTap: () {
+                // Update the state of the app.
+                // Then close the drawer
+                Navigator.pop(context);
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (BuildContext context) => ServiceCharter()));
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.video_call),
+              title: Text('Video Chat'),
+              onTap: () {
+                // Update the state of the app.
+                // Then close the drawer
+                Navigator.pop(context);
+                _allChats();
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.favorite),
+              title: Text('Health Tips'),
+              onTap: () {
+                // Update the state of the app.
+                // Then close the drawer
+                Navigator.pop(context);
+//                _allChats();
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.people),
+              title: Text('Campaigns'),
+              onTap: () {
+                // Update the state of the app.
+                // Then close the drawer
+                Navigator.pop(context);
+//                _allChats();
               },
             ),
             ListTile(
