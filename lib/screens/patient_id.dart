@@ -14,10 +14,12 @@ class PatientId extends StatefulWidget {
 class _PatientIdState extends State<PatientId> {
   String token;
   String deviceToken;
-  bool _btnEnabled = true;
+
+  bool _absorbPointer = false;
+  bool _disableTextField = true;
   bool _progressBarActive = false;
   final FirebaseMessaging _messaging = FirebaseMessaging();
-  var _patientformKey = GlobalKey<FormState>();
+  var _patientFormKey = GlobalKey<FormState>();
   final patientPhone = TextEditingController();
 
   Future<String> getToken() async {
@@ -91,20 +93,23 @@ class _PatientIdState extends State<PatientId> {
       if (user["errorMessage"] == "Invalid Access Token") {
         setState(() {
           _progressBarActive = false;
-          _btnEnabled = true;
+          _absorbPointer = false;
+          _disableTextField = true;
         });
         getToken();
       }
       if (user["errorMessage"] != null) {
         _progressBarActive = false;
-        _btnEnabled = true;
+        _absorbPointer = false;
+        _disableTextField = true;
         _errorAlert(user["errorMessage"]);
       }
     } catch (e) {
       print(e);
       setState(() {
         _progressBarActive = false;
-        _btnEnabled = true;
+        _absorbPointer = false;
+        _disableTextField = true;
       });
     }
     return "Success!";
@@ -130,8 +135,9 @@ class _PatientIdState extends State<PatientId> {
     _messaging.configure(
       onMessage: (Map<String, dynamic> message) {
         setState(() {
-          _btnEnabled = true;
           _progressBarActive = false;
+          _absorbPointer = false;
+          _disableTextField = true;
 //       debugPrint('NIKO ${message.toString()}');
           _ackAlert(message);
         });
@@ -164,79 +170,79 @@ class _PatientIdState extends State<PatientId> {
       body: Builder(
         builder: (context) => Container(
               margin: EdgeInsets.all(5.0),
-              child: Form(
-                key: _patientformKey,
-                child: ListView(
-                  children: <Widget>[
-                    Column(
-                      children: <Widget>[
-                        Image.asset(
-                          'assets/lipa.png',
-                          height: 150,
-                        ),
-                        Text(
-                          "Please Enter Mpesa Phone Number",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontStyle: FontStyle.italic,
+              child: AbsorbPointer(
+                absorbing: _absorbPointer,
+                child: Form(
+                  key: _patientFormKey,
+                  child: ListView(
+                    children: <Widget>[
+                      Column(
+                        children: <Widget>[
+                          Image.asset(
+                            'assets/lipa.png',
+                            height: 150,
+                          ),
+                          Text(
+                            "Please Enter Mpesa Phone Number",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontStyle: FontStyle.italic,
+                              color: Colors.green,
+                            ),
+                            textScaleFactor: 1.2,
+                          ),
+
+                          /*Patient Phone*/
+                          ListTile(
+                            leading: Icon(Icons.phone),
+                            title: TextFormField(
+                              controller: patientPhone,
+                              enabled: _disableTextField,
+                              validator: (String value) {
+                                if (value.trim().isEmpty ||
+                                    value.trim().length < 10) {
+                                  return "Enter Valid Phone Number!";
+                                }
+                              },
+                              decoration: InputDecoration(
+                                errorStyle:
+                                    TextStyle(color: Colors.red, fontSize: 15),
+                                hintText: 'Enter Phone Number',
+                              ),
+                              keyboardType: TextInputType.phone,
+                              maxLength: 10,
+                            ),
+                          ),
+                          _showProgress(),
+                          Material(
+                            elevation: 5.0,
+                            borderRadius: BorderRadius.circular(30.0),
                             color: Colors.green,
-                          ),
-                          textScaleFactor: 1.2,
-                        ),
-
-                        /*Patient Phone*/
-                        ListTile(
-                          leading: Icon(Icons.phone),
-                          title: TextFormField(
-                            controller: patientPhone,
-                            validator: (String value) {
-                              if (value.trim().isEmpty ||
-                                  value.trim().length < 10) {
-                                return "Enter Valid Phone Number!";
-                              }
-                            },
-                            decoration: InputDecoration(
-                              errorStyle:
-                                  TextStyle(color: Colors.red, fontSize: 15),
-                              hintText: 'Enter Phone Number',
-                            ),
-                            keyboardType: TextInputType.phone,
-                            maxLength: 10,
-                          ),
-                        ),
-                        _showProgress(),
-                        Material(
-                          elevation: 5.0,
-                          borderRadius: BorderRadius.circular(30.0),
-                          color: Colors.green,
-                          child: MaterialButton(
-                            minWidth: MediaQuery.of(context).size.width / 1.1,
-                            onPressed: () {
-                              if (_patientformKey.currentState.validate()) {
-                                setState(() {
-                                  _progressBarActive = true;
-                                  Timer(const Duration(seconds: 3), () {
-                                    debugPrint("KENYA $_btnEnabled");
-//
-                                    _btnEnabled == true
-                                        ? _getPatientID(patientPhone.text)
-                                        : null;
-
-                                    _btnEnabled = false;
+                            child: MaterialButton(
+                              minWidth: MediaQuery.of(context).size.width / 1.1,
+                              onPressed: () {
+                                if (_patientFormKey.currentState.validate()) {
+                                  setState(() {
+                                    _progressBarActive = true;
+                                    _absorbPointer = true;
+                                    _disableTextField = false;
+                                    Timer(const Duration(seconds: 3), () {
+                                      _getPatientID(patientPhone.text);
+                                    });
                                   });
-                                });
-                              }
-                            },
-                            child: Text(
-                              "Lipa Na Mpesa",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(color: Colors.white),
+                                }
+                              },
+                              child: Text(
+                                "Lipa Na Mpesa",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(color: Colors.white),
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

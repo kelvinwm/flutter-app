@@ -22,8 +22,12 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
   String _codeVerify, _phone;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   FormType _formType = FormType.verifyPhone;
+
+  ///SETTING STATUS
   bool _progressBarActive = false;
-  bool _textError = false;
+  bool _absorbPointer = false;
+  bool _disableTextField = true;
+
   String _message = '';
   String _verificationId;
 
@@ -33,36 +37,6 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
       _formType = FormType.verifyPhone;
     });
   }
-
-//  //TODO: SIGN IN AND SIGN UP METHOD
-//  void _loginSignUp() async {
-//    final formState = _formKey.currentState;
-//    if (formState.validate()) {
-//      // TODO: Login
-//      formState.save();
-//      try {
-//        String userId;
-//        setState(() {
-//          _progressBarActive = true;
-//        });
-//        if (_formType == FormType.login) {
-//          userId =
-//              await widget.auth.signInWithEmailAndPassword(_email, _password);
-//        } else {
-//          userId = await widget.auth
-//              .createUserWithEmailAndPassword(_email, _password);
-//        }
-//        _getUserUid(userId);
-//        widget.onSignedIn();
-//      } catch (e) {
-//        print(e.message);
-//        setState(() {
-//          _textError = true;
-//          _progressBarActive = false;
-//        });
-//      }
-//    }
-//  }
 
   void _getUserUid(String userId) async {
     final prefs = await SharedPreferences.getInstance();
@@ -78,6 +52,8 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
       setState(() {
         _message = '';
         _progressBarActive = true;
+        _absorbPointer = true;
+        _disableTextField = false;
       });
       try {
         final PhoneVerificationCompleted verificationCompleted =
@@ -94,6 +70,8 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
             _message =
                 'Phone number verification failed. Code: ${authException.code}. Message: ${authException.message}';
             _progressBarActive = false;
+            _absorbPointer = false;
+            _disableTextField = true;
           });
         };
 
@@ -110,6 +88,8 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
             _verificationId = verificationId;
             _formKey.currentState.reset();
             _progressBarActive = false;
+            _absorbPointer = false;
+            _disableTextField = true;
           });
         };
 
@@ -130,6 +110,8 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
           _message =
               "Please enter a valid phone number in the correct format. eg +254 712 345 678";
           _progressBarActive = false;
+          _absorbPointer = false;
+          _disableTextField = true;
           debugPrint(e);
         });
       }
@@ -145,6 +127,8 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
       setState(() {
         _message = '';
         _progressBarActive = true;
+        _absorbPointer = true;
+        _disableTextField = false;
       });
       try {
         final AuthCredential credential = PhoneAuthProvider.getCredential(
@@ -158,11 +142,15 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
           if (user != null) {
             _message = 'Successfully signed in, uid: ' + user.uid;
             _progressBarActive = false;
+            _absorbPointer = false;
+            _disableTextField = true;
             _getUserUid(user.uid);
             widget.onSignedIn();
           } else {
             _message = 'Sign in failed';
             _progressBarActive = false;
+            _absorbPointer = false;
+            _disableTextField = true;
           }
         });
       } catch (e) {
@@ -170,6 +158,8 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
           debugPrint(e);
           _message = "Invalid verification code";
           _progressBarActive = false;
+          _absorbPointer = false;
+          _disableTextField = true;
         });
       }
     }
@@ -187,55 +177,39 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
     );
   }
 
-  // TODO progress bar
-  Widget _showError() {
-    return Center(
-      child: Padding(
-        padding: EdgeInsets.all(15.0),
-        child: _textError == true
-            ? Text(
-                "Wrong password or email",
-                style:
-                    TextStyle(fontStyle: FontStyle.italic, color: Colors.red),
-                textScaleFactor: 1.2,
-              )
-            : Container(),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Welcome login"),
-      ),
-      body: Container(
-        padding: EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            shrinkWrap: true,
-            children: <Widget>[
-              _showLogo(),
-              _showPhoneInput(),
-              _showProgress(),
-              _showError(),
-              _showLoginButton(),
-              _showSignIn(),
-              Container(
-                alignment: Alignment.center,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Text(
-                  _message,
-                  style: TextStyle(color: Colors.red),
-                ),
-              )
-            ],
-          ),
+        appBar: AppBar(
+          title: Text("Welcome login"),
         ),
-      ),
-    );
+        body: AbsorbPointer(
+          absorbing: _absorbPointer,
+          child: Container(
+            padding: EdgeInsets.all(16.0),
+            child: Form(
+              key: _formKey,
+              child: ListView(
+                shrinkWrap: true,
+                children: <Widget>[
+                  _showLogo(),
+                  _showPhoneInput(),
+                  _showProgress(),
+                  _showLoginButton(),
+                  _showSignIn(),
+                  Container(
+                    alignment: Alignment.center,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Text(
+                      _message,
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+        ));
   }
 
   Widget _showLogo() {
@@ -257,6 +231,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
       return Padding(
         padding: EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 0.0),
         child: TextFormField(
+          enabled: _disableTextField,
           maxLines: 1,
           keyboardType: TextInputType.phone,
           autofocus: false,
@@ -277,6 +252,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
         padding: EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 0.0),
         child: TextFormField(
           maxLines: 1,
+          enabled: _disableTextField,
           keyboardType: TextInputType.phone,
           autofocus: false,
           decoration: InputDecoration(

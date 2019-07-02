@@ -144,7 +144,7 @@ class _NewPatientState extends State<NewPatient> {
                             borderRadius: BorderRadius.circular(5.0)),
                       ),
                     ),
-                    SizedBox(height: 5.0),
+                    SizedBox(height: 15.0),
 
                     ///GET PATIENT ID BUTTON
                     Container(
@@ -161,7 +161,7 @@ class _NewPatientState extends State<NewPatient> {
                         child: Text(
                           "Get Patient ID",
                           textAlign: TextAlign.center,
-                          style: TextStyle(color: Colors.white),
+                          style: TextStyle(color: Colors.blueAccent),
                         ),
                       ),
                     ),
