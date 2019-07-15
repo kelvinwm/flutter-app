@@ -37,8 +37,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
     Toast.show(msg, context,
         duration: duration, gravity: gravity, backgroundColor: Colors.red);
     setState(() {
-      _message =
-      'No internet connection!';
+      _message = 'No internet connection!';
       _progressBarActive = false;
       _absorbPointer = false;
       _disableTextField = true;
@@ -115,8 +114,10 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
           _verificationId = verificationId;
         };
 
+        String newPhone = '+254${_phone.replaceFirst(new RegExp(r'0'), '')}';
+
         await _auth.verifyPhoneNumber(
-            phoneNumber: _phone,
+            phoneNumber: newPhone,
             timeout: const Duration(seconds: 5),
             verificationCompleted: verificationCompleted,
             verificationFailed: verificationFailed,
@@ -125,7 +126,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
       } catch (e) {
         setState(() {
           _message =
-              "Please enter a valid phone number in the correct format. eg +254 712 345 678";
+              "Please enter a valid phone number in the correct format. eg 0712 345 678";
           _progressBarActive = false;
           _absorbPointer = false;
           _disableTextField = true;
@@ -172,7 +173,6 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
         });
       } catch (e) {
         setState(() {
-          debugPrint(e);
           _message = "Invalid verification code";
           _progressBarActive = false;
           _absorbPointer = false;
@@ -254,7 +254,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
           autofocus: false,
           decoration: InputDecoration(
               labelText: 'Enter Phone number',
-              hintText: 'eg. +254 712 345 678',
+              hintText: 'eg. 0712 345 678',
               icon: Icon(
                 Icons.phone,
                 color: Colors.grey,
@@ -262,6 +262,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
           validator: (value) =>
               value.isEmpty ? 'Phone Number can\'t be empty' : null,
           onSaved: (value) => _phone = value,
+          maxLength: 10,
         ),
       );
     } else {
