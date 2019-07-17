@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_database/firebase_database.dart';
 
-import 'chats_screen.dart';
+import 'all_chats.dart';
 
 class ConsultSpecialist extends StatefulWidget {
   @override
@@ -235,8 +235,8 @@ class _ConsultSpecialistState extends State<ConsultSpecialist> {
                                       context,
                                       new MaterialPageRoute(
                                           builder: (BuildContext context) =>
-                                              new Chat(
-                                                  userId, patientNames.text)));
+                                              new AllChats(
+                                                  userId)));
                                 }
                               }
                             },
@@ -277,7 +277,8 @@ class _ConsultSpecialistState extends State<ConsultSpecialist> {
         'user': '${patientNames.text}',
         'issue': '$dropdownValue',
         'timestamp': DateTime.now().millisecondsSinceEpoch.toString(),
-        'time': '$theDate'
+        'time': '$theDate',
+        'payment': 'Make Payments',
       });
 
       recentJobsRef

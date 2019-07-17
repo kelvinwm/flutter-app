@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:toast/toast.dart';
 
 import 'chats_screen.dart';
 import 'consult_specialist.dart';
 import 'package:firebase_database/firebase_database.dart';
+import '../screens/patient_id.dart';
 
 class AllChats extends StatefulWidget {
   AllChats(this.userId);
@@ -79,12 +81,28 @@ class _AllChatsState extends State<AllChats> {
                 var ref = snap.data.snapshot.value;
                 var keys = ref.keys;
                 for (var key in keys) {
+                  if (ref[key]["user"] == null) {
+                    ref[key]["user"] = '...';
+                  }
+                  if (ref[key]["issue"] == null) {
+                    ref[key]["issue"] = '...';
+                  }
+                  if (ref[key]["time"] == null) {
+                    ref[key]["time"] = '...';
+                  }
+                  if (ref[key]["timestamp"] == null) {
+                    ref[key]["timestamp"] = '...';
+                  }
+                  if (ref[key]["payment"] == null) {
+                    ref[key]["payment"] = '...';
+                  }
                   Item items = new Item(
-                    ref[key]["user"],
-                    ref[key]["issue"],
-                    ref[key]["time"],
-                    ref[key]["timestamp"],
-                  );
+                      ref[key]["user"],
+                      ref[key]["issue"],
+                      ref[key]["time"],
+                      ref[key]["timestamp"],
+                      ref[key]["payment"],
+                      key);
                   myItem.add(items);
                 }
 
@@ -142,7 +160,36 @@ class _AllChatsState extends State<AllChats> {
                             padding: EdgeInsets.fromLTRB(0.0, 5.0, 0.0, 10.0),
                             child: Text('Issue:     ' + res[index].issue),
                           ),
-                          Text('Time:   ' + res[index].time),
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(0.0, 5.0, 0.0, 10.0),
+                            child: Text('Time:   ' + res[index].time),
+                          ),
+                          RaisedButton(
+                            onPressed: () {
+                              if (res[index]
+                                  .payment
+                                  .contains("Make Payments")) {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (BuildContext context) =>
+                                            PatientId(
+                                                widget.userId,
+                                                "Consultation Fee",
+                                                '1050',
+                                                res[index].itemKey)));
+                                return;
+                              }
+                              if (res[index]
+                                  .payment
+                                  .contains("Payments Already Made")) {
+                                userName = res[index].user;
+                                _myChat(userName);
+                                return;
+                              }
+                            },
+                            child: Text(res[index].payment),
+                          ),
                         ],
                       ),
                     ),
@@ -156,6 +203,11 @@ class _AllChatsState extends State<AllChats> {
                 ),
               ),
               onTap: () {
+                if (res[index].payment.contains("Make Payments")) {
+                  Toast.show("Please pay the consultaion fee", context,
+                      duration: Toast.LENGTH_LONG, gravity: Toast.CENTER);
+                  return;
+                }
                 userName = res[index].user;
                 _myChat(userName);
               },
@@ -166,12 +218,14 @@ class _AllChatsState extends State<AllChats> {
 }
 
 class Item {
-  String user, issue, time, timestamp;
+  String user, issue, time, timestamp, payment, itemKey;
 
   Item(
     this.user,
     this.issue,
     this.time,
     this.timestamp,
+    this.payment,
+    this.itemKey,
   );
 }

@@ -100,16 +100,37 @@ class HomepageState extends State<Home> {
               var ref = snap.data.snapshot.value;
               var keys = ref.keys;
               for (var key in keys) {
+                if (ref[key]["clinicdate"] == null) {
+                  ref[key]["clinicdate"] = '...';
+                }
+                if (ref[key]["clinicname"] == null) {
+                  ref[key]["clinicname"] = '...';
+                }
+                if (ref[key]["clinictime"] == null) {
+                  ref[key]["clinictime"] = '...';
+                }
+                if (ref[key]["keytouse"] == null) {
+                  ref[key]["keytouse"] = '...';
+                }
+                if (ref[key]["status"] == null) {
+                  ref[key]["status"] = '...';
+                }
+                if (ref[key]["timestamp"] == null) {
+                  ref[key]["timestamp"] = '...';
+                }
+                if (ref[key]["payment"] == null) {
+                  ref[key]["payment"] = '...';
+                }
                 if (!(ref[key]["status"].toString().contains("Attended"))) {
                   Item items = new Item(
-                    ref[key]["clinicdate"],
-                    ref[key]["clinicname"],
-                    ref[key]["clinictime"],
-                    ref[key]["keytouse"],
-                    ref[key]["status"],
-                    ref[key]["timestamp"],
-                    ref[key]["payment"],
-                  );
+                      ref[key]["clinicdate"],
+                      ref[key]["clinicname"],
+                      ref[key]["clinictime"],
+                      ref[key]["keytouse"],
+                      ref[key]["status"],
+                      ref[key]["timestamp"],
+                      ref[key]["payment"],
+                      key);
                   myItem.add(items);
                 }
               }
@@ -185,8 +206,10 @@ class HomepageState extends State<Home> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (BuildContext context) =>
-                            PatientId(widget.userId)));
+                        builder: (BuildContext context) => PatientId(
+                            widget.userId,
+                            "Acquire Patient ID Online",
+                            '150', 'none')));
               },
             ),
             ListTile(
@@ -269,21 +292,8 @@ class HomepageState extends State<Home> {
       scrollDirection: Axis.vertical,
       itemCount: res.length,
       itemBuilder: (context, index) {
-        bool isPaid = false;
         res.sort((a, b) => a.timestamp.compareTo(b.timestamp));
         res.reversed;
-        if (res[index].payment == null) {
-          res[index].payment = '...';
-        }
-        if (res[index].clinicdate == null) {
-          res[index].clinicdate = '...';
-        }
-        if (res[index].clinictime == null) {
-          res[index].clinictime = '...';
-        }
-        if (res[index].status == null) {
-          res[index].status = '...';
-        }
         return Card(
           elevation: 4,
           //  titles[index]     <-- Card widget
@@ -317,8 +327,15 @@ class HomepageState extends State<Home> {
                               if (res[index]
                                   .payment
                                   .contains("Make Payments")) {
-                                /*NAVIGATE TO M-PESA PAYMENT*/
-                                debugPrint("KELEKELE");
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (BuildContext context) =>
+                                            PatientId(
+                                                widget.userId,
+                                                "Appointment Fee",
+                                                '350',
+                                                res[index].itemKey)));
                                 return;
                               }
                               if (res[index]
@@ -418,7 +435,8 @@ class Item {
       keytouse,
       status,
       timestamp,
-      payment;
+      payment,
+      itemKey;
 
   Item(
     this.clinicdate,
@@ -428,5 +446,6 @@ class Item {
     this.status,
     this.timestamp,
     this.payment,
+    this.itemKey,
   );
 }

@@ -171,6 +171,21 @@ class ChatUi extends StatelessWidget {
               var ref = snap.data.snapshot.value;
               var keys = ref.keys;
               for (var key in keys) {
+                if (ref[key]["user"] == null) {
+                  ref[key]["user"] = '...';
+                }
+                if (ref[key]["message"] == null) {
+                  ref[key]["message"] = '...';
+                }
+                if (ref[key]["time"] == null) {
+                  ref[key]["time"] = '...';
+                }
+                if (ref[key]["timestamp"] == null) {
+                  ref[key]["timestamp"] = '...';
+                }
+                if (ref[key]["userUID"] == null) {
+                  ref[key]["userUID"] = '...';
+                }
                 Item items = new Item(
                     ref[key]["user"],
                     ref[key]["message"],
@@ -203,21 +218,6 @@ Widget incomingMessage(List<Item> res, String myUid) {
 }
 
 Widget chatListItem(Item res, CrossAxisAlignment side, String userName) {
-  if (res.user == null) {
-    res.user = '...';
-  }
-  if (res.message == null) {
-    res.message = 'No cahts present';
-  }
-  if (res.time == null) {
-    res.time = '...';
-  }
-  if (res.timestamp == null) {
-    res.timestamp = '...';
-  }
-  if (res.myUid == null) {
-    res.myUid = '...';
-  }
   return Card(
     child: Row(
       children: <Widget>[

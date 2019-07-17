@@ -208,7 +208,6 @@ class _BookNewState extends State<BookNew> {
               "clinicdate": "$theDate",
               "clinicname": "${widget.userClinic}",
               "clinictime": "$timePeriod",
-              "patient_id": "$pID",
               "phone": "$phone",
               "status": "Pending",
               "patientID": '$pID',

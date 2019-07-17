@@ -166,10 +166,15 @@ class _NewPatientState extends State<NewPatient> {
                         onTap: () {
                           _getNewPatientDetails();
                           Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (BuildContext context) =>
-                                      PatientId(widget.userId)));
+                            context,
+                            MaterialPageRoute(
+                              builder: (BuildContext context) => PatientId(
+                                  widget.userId,
+                                  'Acquire patient ID',
+                                  '150',
+                                  'none'),
+                            ),
+                          );
                         },
                         child: Text(
                           "Get Patient ID",

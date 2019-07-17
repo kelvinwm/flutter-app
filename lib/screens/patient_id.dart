@@ -9,9 +9,17 @@ import 'package:toast/toast.dart';
 import '../auth/auth.dart';
 
 class PatientId extends StatefulWidget {
-  PatientId(this.userId);
+  PatientId(
+    this.userId,
+    this.paymentKind,
+    this.paymentFee,
+    this.itemKeyToBeUpdated,
+  );
 
   final String userId;
+  final String paymentFee;
+  final String paymentKind;
+  final String itemKeyToBeUpdated;
 
   @override
   _PatientIdState createState() => _PatientIdState();
@@ -72,6 +80,10 @@ class _PatientIdState extends State<PatientId> {
       });
     } else {
       String newPhone = '254${phoneNumber.replaceFirst(new RegExp(r'0'), '')}';
+      String whatAmPaying =
+          widget.paymentKind.replaceAll(new RegExp(r"\s+\b|\b\s"), "");
+      String itemToBeUpdated = widget.itemKeyToBeUpdated;
+      String userUID = widget.userId;
 
       String stkUrl =
           "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest";
@@ -99,8 +111,8 @@ class _PatientIdState extends State<PatientId> {
           '"PartyA": "$newPhone",'
           '"PartyB": "174379",'
           '"PhoneNumber": "$newPhone",'
-          '"CallBackURL": "https://knhsystem.herokuapp.com/mpesa/$newPhone/${widget.userId}",'
-//        '"CallBackURL": "https://eminus.serveo.net/mpesa/$newPhone/${widget.userId}",'
+          '"CallBackURL": "https://knhsystem.herokuapp.com/mpesa/$newPhone/$userUID/$whatAmPaying/$itemToBeUpdated",'
+//          '"CallBackURL": "https://satis.serveo.net/mpesa/$newPhone/$userUID/$whatAmPaying/$itemToBeUpdated",'
           '"AccountReference": "account",'
           '"TransactionDesc": "test" }';
 
@@ -129,7 +141,17 @@ class _PatientIdState extends State<PatientId> {
 
           return "Error";
         }
-        debugPrint("KIIMA${response.body}");
+        if(response.body.isNotEmpty){
+//        debugPrint("KIIMA${response.body}");
+        Future.delayed(const Duration(milliseconds: 4000), () {
+          setState(() {
+            _ackAlert();
+            _progressBarActive = false;
+            _absorbPointer = false;
+            _disableTextField = true;
+          });
+        });
+        }
       } catch (e) {
         print(e);
         setState(() {
@@ -139,14 +161,7 @@ class _PatientIdState extends State<PatientId> {
         });
         return "Error";
       }
-      Future.delayed(const Duration(milliseconds: 5000), () {
-        setState(() {
-          _ackAlert();
-          _progressBarActive = false;
-          _absorbPointer = false;
-          _disableTextField = true;
-        });
-      });
+
     }
     return "Success!";
   }
@@ -200,7 +215,7 @@ class _PatientIdState extends State<PatientId> {
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: AppBar(
-        title: Text("Acquire Patient ID Online"),
+        title: Text(widget.paymentKind),
         backgroundColor: Colors.green,
       ),
       body: Builder(
@@ -216,7 +231,19 @@ class _PatientIdState extends State<PatientId> {
                         children: <Widget>[
                           Image.asset(
                             'assets/lipa.png',
-                            height: 150,
+                            height: 120,
+                          ),
+                          Text(
+                            "${widget.paymentKind} : ksh.${widget.paymentFee}",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontStyle: FontStyle.italic,
+                              color: Colors.green,
+                            ),
+                            textScaleFactor: 1.2,
+                          ),
+                          SizedBox(
+                            height: 30,
                           ),
                           Text(
                             "Please Enter Mpesa Phone Number",
@@ -295,9 +322,9 @@ class _PatientIdState extends State<PatientId> {
         if (Platform.isAndroid) {
           // Android-specific code
           return AlertDialog(
-            title: Text("Acquiring patient ID"),
+            title: Text("Transcation Confirmation"),
             content: Text(
-                "You will recieve your PATIENT ID via sms on successful payment."),
+                "You will recieve a confirmation message once your payment is successful."),
             actions: <Widget>[
               // usually buttons at the bottom of the dialog
               new FlatButton(
@@ -311,9 +338,9 @@ class _PatientIdState extends State<PatientId> {
         } else if (Platform.isIOS) {
           // iOS-specific code
           return AlertDialog(
-            title: Text("Acquiring patient ID"),
+            title: Text("Transcation Confirmation"),
             content: Text(
-                "You will recieve your PATIENT ID via sms on successful payment."),
+                "You will recieve a confirmation message once your payment is successful."),
             actions: <Widget>[
               // usually buttons at the bottom of the dialog
               new FlatButton(
