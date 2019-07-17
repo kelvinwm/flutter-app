@@ -196,7 +196,8 @@ class _BookNewState extends State<BookNew> {
               "clinictime": '$timePeriod',
               'timestamp': DateTime.now().millisecondsSinceEpoch.toString(),
               "keytouse": '${newPostRef.key}',
-              "status": 'Pending'
+              "status": 'Pending',
+              "payment":'Waiting Approval'
             });
             FirebaseDatabase.instance
                 .reference()
@@ -207,13 +208,14 @@ class _BookNewState extends State<BookNew> {
               "clinicdate": "$theDate",
               "clinicname": "${widget.userClinic}",
               "clinictime": "$timePeriod",
-              "patient_id": "78",
-              "phone": "98",
+              "patient_id": "$pID",
+              "phone": "$phone",
               "status": "Pending",
               "patientID": '$pID',
               "userUID": "$userId",
               "username": "$pName",
               'timestamp': DateTime.now().millisecondsSinceEpoch.toString(),
+              "payment":'Pending'
             });
           }
 

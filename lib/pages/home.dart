@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:toast/toast.dart';
 
 import '../auth/auth.dart';
 import 'consult_specialist.dart';
@@ -107,6 +108,7 @@ class HomepageState extends State<Home> {
                     ref[key]["keytouse"],
                     ref[key]["status"],
                     ref[key]["timestamp"],
+                    ref[key]["payment"],
                   );
                   myItem.add(items);
                 }
@@ -262,71 +264,106 @@ class HomepageState extends State<Home> {
     );
   }
 
-//  void _getUserId() async {
-//    final prefs = await SharedPreferences.getInstance();
-//    myUserId = prefs.getString('userId') ?? '';
-//  }
-}
-
-Widget incomingMessage(List<Item> res, BuildContext context) {
-  return ListView.builder(
-    scrollDirection: Axis.vertical,
-    itemCount: res.length,
-    itemBuilder: (context, index) {
-      res.sort((a, b) => a.timestamp.compareTo(b.timestamp));
-      res.reversed;
-//      if (!(res[index].status.contains("Attended"))) {
-      return Card(
-        elevation: 4,
-        //  titles[index]     <-- Card widget
-        child: ListTile(
-            title: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                    child: Column(
-                      // align the text to the left instead of centered
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(res[index].clinicname,
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold)),
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 10.0),
-                          child: Text('Date:      ' + res[index].clinicdate),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(0.0, 5.0, 0.0, 10.0),
-                          child: Text('Time:     ' + res[index].clinictime),
-                        ),
-                        Text('Status:   ' + res[index].status),
-                      ],
+  Widget incomingMessage(List<Item> res, BuildContext context) {
+    return ListView.builder(
+      scrollDirection: Axis.vertical,
+      itemCount: res.length,
+      itemBuilder: (context, index) {
+        bool isPaid = false;
+        res.sort((a, b) => a.timestamp.compareTo(b.timestamp));
+        res.reversed;
+        if (res[index].payment == null) {
+          res[index].payment = '...';
+        }
+        if (res[index].clinicdate == null) {
+          res[index].clinicdate = '...';
+        }
+        if (res[index].clinictime == null) {
+          res[index].clinictime = '...';
+        }
+        if (res[index].status == null) {
+          res[index].status = '...';
+        }
+        return Card(
+          elevation: 4,
+          //  titles[index]     <-- Card widget
+          child: ListTile(
+              title: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: Column(
+                        // align the text to the left instead of centered
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(res[index].clinicname,
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold)),
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 10.0),
+                            child: Text('Date:      ' + res[index].clinicdate),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(0.0, 5.0, 0.0, 10.0),
+                            child: Text('Time:     ' + res[index].clinictime),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(0.0, 5.0, 0.0, 10.0),
+                            child: Text('Status:   ' + res[index].status),
+                          ),
+                          RaisedButton(
+                            onPressed: () {
+                              if (res[index]
+                                  .payment
+                                  .contains("Make Payments")) {
+                                /*NAVIGATE TO M-PESA PAYMENT*/
+                                debugPrint("KELEKELE");
+                                return;
+                              }
+                              if (res[index]
+                                  .payment
+                                  .contains("Payments Already Made")) {
+                                Toast.show("Payments have been made", context,
+                                    duration: Toast.LENGTH_LONG,
+                                    gravity: Toast.CENTER);
+                                return;
+                              } else {
+                                Toast.show(
+                                    "Clinic request waiting approval", context,
+                                    duration: Toast.LENGTH_LONG,
+                                    gravity: Toast.CENTER);
+                              }
+                            },
+                            child: Text(res[index].payment),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            trailing: IconButton(
-              icon: new Icon(Icons.edit),
-              onPressed: () {
+              trailing: IconButton(
+                icon: new Icon(Icons.edit),
+                onPressed: () {
 //                  print('HAPA ${document.documentID}'); // doc id
 //                  /* Your code */
 //                  print(document['time']);
 
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (BuildContext context) => BookNew(
-                            res[index].clinicname,
-                            "YES",
-                            res[index].keytouse)));
-              },
-            )),
-      );
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (BuildContext context) => BookNew(
+                              res[index].clinicname,
+                              "YES",
+                              res[index].keytouse)));
+                },
+              )),
+        );
 //      }
-    },
-  );
+      },
+    );
+  }
 }
 
 showAlertDialog(BuildContext context) async {
@@ -375,7 +412,13 @@ showAlertDialog(BuildContext context) async {
 }
 
 class Item {
-  String clinicdate, clinicname, clinictime, keytouse, status, timestamp;
+  String clinicdate,
+      clinicname,
+      clinictime,
+      keytouse,
+      status,
+      timestamp,
+      payment;
 
   Item(
     this.clinicdate,
@@ -384,5 +427,6 @@ class Item {
     this.keytouse,
     this.status,
     this.timestamp,
+    this.payment,
   );
 }

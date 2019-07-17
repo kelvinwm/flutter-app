@@ -110,22 +110,15 @@ class Chat extends StatelessWidget {
 
   void _sendData(String text) {
     String theDate =
-        DateFormat('EEEE, MMMM d y::' + ' hh:mm aaa').format(DateTime.now());
+        DateFormat('EEEE, MMMM d, y' + ' hh:mm aaa').format(DateTime.now());
 //        DateFormat('yyyy-MM-dd HH:mm aaa').format(DateTime.now());
     recentJobsRef.child(userId).child('$thePatient').push().set({
       'user': '$thePatient',
       'message': '$text',
       'timestamp': DateTime.now().millisecondsSinceEpoch.toString(),
-      'time': '$theDate'
+      'time': '$theDate',
+      'userUID': '$userId'
     });
-
-//    Firestore.instance
-//        .collection('chats')
-//        .document("$userId")
-//        .collection("$thePatient")
-//        .document()
-//        .setData(
-//            {'user': '$thePatient', 'message': '$text', 'time': '$theDate'});
   }
 
   void showToast(BuildContext context, String msg,
@@ -178,68 +171,52 @@ class ChatUi extends StatelessWidget {
               var ref = snap.data.snapshot.value;
               var keys = ref.keys;
               for (var key in keys) {
-                Item items = new Item(ref[key]["user"], ref[key]["message"],
-                    ref[key]["time"], ref[key]["timestamp"]);
+                Item items = new Item(
+                    ref[key]["user"],
+                    ref[key]["message"],
+                    ref[key]["time"],
+                    ref[key]["timestamp"],
+                    ref[key]["userUID"]);
                 myItem.add(items);
               }
-              return incomingMessage(myItem);
+              return incomingMessage(myItem, userId);
           }
         },
       ),
-
-//      StreamBuilder<QuerySnapshot>(
-//        stream: Firestore.instance
-//            .collection('chats')
-//            .document("$userId")
-//            .collection("$thePatient")
-//            .snapshots(),
-//        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-//          if (snapshot.hasError) return Text('Error: ${snapshot.error}');
-//          switch (snapshot.connectionState) {
-//            case ConnectionState.waiting:
-//              return CircularProgressIndicator();
-//            default:
-//              return Column(
-//                children: <Widget>[
-//                  incomingMessage(snapshot),
-//                ],
-//              );
-//          }
-//        },
-//      ),
     );
   }
 }
 
-Widget incomingMessage(List<Item> res) {
+Widget incomingMessage(List<Item> res, String myUid) {
   return ListView.builder(
       scrollDirection: Axis.vertical,
       itemCount: res.length,
       itemBuilder: (context, index) {
         res.sort((a, b) => a.timestamp.compareTo(b.timestamp));
-        if (res[index].message == "incoming") {
-          return chatListItem(res[index], CrossAxisAlignment.start);
+        if ((res[index].myUid) == myUid) {
+          return chatListItem(res[index], CrossAxisAlignment.end, 'You');
         } else {
-          return chatListItem(res[index], CrossAxisAlignment.end);
+          return chatListItem(
+              res[index], CrossAxisAlignment.start, res[index].user);
         }
       });
-
-//    ListView(
-//      children: snapshot.data.documents.map((DocumentSnapshot document) {
-//        if (document['message'] == "incoming") {
-//          return chatListItem(document, CrossAxisAlignment.start);
-//        } else {
-//          return chatListItem(document, CrossAxisAlignment.end);
-//        }
-//      }).toList(),
-//    ),
 }
 
-Widget chatListItem(Item res, CrossAxisAlignment side) {
+Widget chatListItem(Item res, CrossAxisAlignment side, String userName) {
+  if (res.user == null) {
+    res.user = '...';
+  }
   if (res.message == null) {
-    return Card(
-      child: Text("Missing data"),
-    );
+    res.message = 'No cahts present';
+  }
+  if (res.time == null) {
+    res.time = '...';
+  }
+  if (res.timestamp == null) {
+    res.timestamp = '...';
+  }
+  if (res.myUid == null) {
+    res.myUid = '...';
   }
   return Card(
     child: Row(
@@ -252,7 +229,7 @@ Widget chatListItem(Item res, CrossAxisAlignment side) {
               crossAxisAlignment: side,
               children: <Widget>[
                 Text(
-                  res.user,
+                  userName,
                   style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
@@ -283,12 +260,13 @@ Widget chatListItem(Item res, CrossAxisAlignment side) {
 }
 
 class Item {
-  String user, message, time, timestamp;
+  String user, message, time, timestamp, myUid;
 
   Item(
     this.user,
     this.message,
     this.time,
     this.timestamp,
+    this.myUid,
   );
 }

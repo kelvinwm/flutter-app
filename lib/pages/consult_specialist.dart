@@ -72,7 +72,22 @@ class _ConsultSpecialistState extends State<ConsultSpecialist> {
                           ),
                           textScaleFactor: 1.2,
                         ),
-                        SizedBox(height: 25.0),
+                        SizedBox(height: 5.0),
+                        /*Doctor Availability*/
+                        ListTile(
+                          leading: Icon(Icons.people),
+                          title: Row(
+                            children: <Widget>[
+                              Text("DOCTORS:  "),
+                              Container(
+                                child: Text(
+                                  "   Available",
+                                  style: TextStyle(color: Colors.green),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
                         /*Patient Names*/
                         ListTile(
                           leading: Icon(Icons.person),
@@ -146,7 +161,7 @@ class _ConsultSpecialistState extends State<ConsultSpecialist> {
                         /*Patient description*/
                         ListTile(
                           title: TextFormField(
-                            maxLines: 8,
+                            maxLines: 5,
                             controller: patientDescription,
                             validator: (String value) {
                               if (value.isEmpty) {
@@ -155,13 +170,10 @@ class _ConsultSpecialistState extends State<ConsultSpecialist> {
                             },
                             decoration: new InputDecoration(
                                 hintText:
-                                    'ENTER HEALTH ISSUE DESCRIPTION HERE \n\n'
+                                    'ENTER HEALTH ISSUE DESCRIPTION HERE \n'
                                     'eg. I have been suffering from fever since '
                                     'last 4 days and temperature start to raise at '
-                                    'any time and reaches up to 102 degree '
-                                    '.My leg aches and mild headache '
-                                    'remains a problem too. I have been taking '
-                                    'some medicine but nothing has improved',
+                                    'any time and reaches up to 102 degree.',
                                 border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(5.0))),
                             keyboardType: TextInputType.multiline,
@@ -276,6 +288,16 @@ class _ConsultSpecialistState extends State<ConsultSpecialist> {
           .set({
         'user': '${patientNames.text}',
         'message': '$message',
+        'timestamp': DateTime.now().millisecondsSinceEpoch.toString(),
+        'time': '$theDate',
+        'userUID': userId,
+      });
+
+      recentJobsRef.child("ReadfromSite").push().set({
+        'user': '${patientNames.text}',
+        'issue': '$dropdownValue',
+        'userUID': userId,
+        "Description": '${patientDescription.text}',
         'timestamp': DateTime.now().millisecondsSinceEpoch.toString(),
         'time': '$theDate'
       });
